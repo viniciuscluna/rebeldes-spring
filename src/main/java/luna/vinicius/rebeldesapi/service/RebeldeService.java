@@ -74,7 +74,8 @@ public class RebeldeService {
     public String atualizarLocalizacao(Localizacao localizacao, Integer rebeldeId){
         var rebelde = repository.findById(rebeldeId).get();
         rebelde.setLocalizacao(localizacao);
-        return "Localização atualizada: " + repository.save(rebelde).getLocalizacao().toString();
+        repository.save(rebelde);
+        return "Localização atualizada";
     }
 
     public String negociar(NegociacaoDto negociacaoDto) throws Exception {
