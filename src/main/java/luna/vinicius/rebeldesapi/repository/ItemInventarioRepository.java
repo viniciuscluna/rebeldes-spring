@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ItemInventarioRepository extends CrudRepository<ItemInventario, Integer> {
-    @Query("from ItemInventario iv join iv.rebelde r where r.id=:rebeldeId")
+    @Query("select iv from ItemInventario iv join iv.rebelde r where r.id=:rebeldeId")
     public Iterable<ItemInventario> filterByRebelde(@Param("rebeldeId") Integer rebeldeId);
 }

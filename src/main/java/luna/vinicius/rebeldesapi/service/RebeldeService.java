@@ -7,6 +7,7 @@ import luna.vinicius.rebeldesapi.model.Localizacao;
 import luna.vinicius.rebeldesapi.model.Rebelde;
 import luna.vinicius.rebeldesapi.repository.ItemInventarioRepository;
 import luna.vinicius.rebeldesapi.repository.RebeldeRepository;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
@@ -31,7 +32,7 @@ public class RebeldeService {
     }
 
     public List<Rebelde> listar(){
-        return Streamable.of(repository.findAll()).toList();
+        return IterableUtils.toList(repository.findAll());
     }
 
     public Rebelde inserir(Rebelde rebelde){
@@ -78,9 +79,9 @@ public class RebeldeService {
 
     public String negociar(NegociacaoDto negociacaoDto) throws Exception {
         var rebeldeA = repository.findById(negociacaoDto.getRebeldeAId()).get();
-        var itensRebeldeA = (List<ItemInventario>)Streamable.of(itemInventarioRepository.filterByRebelde(negociacaoDto.getRebeldeAId())).toList();
+        var itensRebeldeA = IterableUtils.toList(itemInventarioRepository.filterByRebelde(negociacaoDto.getRebeldeAId()));
         var rebeldeB = repository.findById(negociacaoDto.getRebeldeBId()).get();
-        var itensRebeldeB = (List<ItemInventario>)Streamable.of(itemInventarioRepository.filterByRebelde(negociacaoDto.getRebeldeBId())).toList();
+        var itensRebeldeB = IterableUtils.toList(itemInventarioRepository.filterByRebelde(negociacaoDto.getRebeldeBId()));
 
         if(itensRebeldeA.stream().mapToInt(m-> m.getPontos()).sum() == itensRebeldeB.stream().mapToInt(m-> m.getPontos()).sum()){
 
