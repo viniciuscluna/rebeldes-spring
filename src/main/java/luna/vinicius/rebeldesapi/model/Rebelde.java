@@ -1,5 +1,6 @@
 package luna.vinicius.rebeldesapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -21,6 +22,9 @@ public class Rebelde {
     private  Integer idade;
     private String genero;
     private Boolean traidor;
+
+    @JsonIgnore
+    private Integer reportadoTraidor;
 
     @OneToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name="localizacao_id")

@@ -2,6 +2,7 @@ package luna.vinicius.rebeldesapi.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import luna.vinicius.rebeldesapi.dto.NegociacaoDto;
 import luna.vinicius.rebeldesapi.model.Localizacao;
 import luna.vinicius.rebeldesapi.model.Rebelde;
 import luna.vinicius.rebeldesapi.service.RebeldeService;
@@ -30,12 +31,41 @@ public class RebeldeController {
         return ResponseEntity.ok(criado);
     }
 
+    @PostMapping("/reportarTraidor/{rebeldeId}")
+    public ResponseEntity<String> reportarTraidor(@PathVariable Integer rebeldeId){
+        try {
+            var resultado = rebeldeService.reportarTraidor(rebeldeId);
+            return ResponseEntity.ok(resultado);
+        }
+        catch (Exception ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
     @PutMapping("/atualizaLocalizacao/{rebeldeId}")
-    public ResponseEntity<Localizacao> atualizaLocalizacao(
+    public ResponseEntity<String> atualizaLocalizacao(
             @PathVariable Integer rebeldeId,
             @Valid @RequestBody Localizacao localizacao){
+        try{
         var atualizado = rebeldeService.atualizarLocalizacao(localizacao, rebeldeId);
         return ResponseEntity.ok(atualizado);
+    }
+        catch (Exception ex){
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+    }
+
+    @PostMapping("/negociar")
+    public ResponseEntity<String> negociar(
+            @Valid @RequestBody NegociacaoDto negociacaoDto
+            ){
+        try {
+            var resultado = rebeldeService.negociar(negociacaoDto);
+            return ResponseEntity.ok(resultado);
+        }
+        catch (Exception ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
 }
