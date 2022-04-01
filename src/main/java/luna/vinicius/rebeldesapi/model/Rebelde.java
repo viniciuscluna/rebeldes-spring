@@ -22,6 +22,13 @@ public class Rebelde {
     private  Integer idade;
     private String genero;
     private Boolean traidor;
+    private String login;
+
+    @JsonIgnore
+    private String senha;
+
+    @JsonIgnore
+    private String role;
 
     @JsonIgnore
     private Integer reportadoTraidor;

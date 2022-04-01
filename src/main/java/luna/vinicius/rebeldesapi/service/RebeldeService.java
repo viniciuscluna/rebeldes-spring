@@ -11,6 +11,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,15 +22,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RebeldeService {
 
-    private RebeldeRepository repository;
-    private ItemInventarioRepository itemInventarioRepository;
-
-    @Autowired
-    public RebeldeService(RebeldeRepository repository, ItemInventarioRepository itemInventarioRepository) {
-
-        this.repository = repository;
-        this.itemInventarioRepository = itemInventarioRepository;
-    }
+    private final RebeldeRepository repository;
+    private final ItemInventarioRepository itemInventarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<Rebelde> listar(){
         return IterableUtils.toList(repository.findAll());
@@ -38,6 +33,8 @@ public class RebeldeService {
     public Rebelde inserir(Rebelde rebelde){
         rebelde.setTraidor(false);
         rebelde.setReportadoTraidor(0);
+        rebelde.setRole("ROLE_REBELDE");
+        rebelde.setSenha(passwordEncoder.encode(rebelde.getSenha()));
         var itens = rebelde.getItens();
         rebelde.setItens(new ArrayList<>());
         var created = repository.save(rebelde);
@@ -52,6 +49,17 @@ public class RebeldeService {
         return created;
     }
 
+    public Rebelde inserirAdmin(Rebelde rebelde){
+        rebelde.setTraidor(false);
+        rebelde.setReportadoTraidor(0);
+        rebelde.setRole("ROLE_ADMIN");
+        rebelde.setSenha(passwordEncoder.encode(rebelde.getSenha()));
+        var created = repository.save(rebelde);
+
+        return created;
+    }
+
+
     public String reportarTraidor(Integer rebeldeId) throws Exception {
         var consultaRebelde = repository.findById(rebeldeId);
         if(consultaRebelde.isPresent()) {
@@ -63,6 +71,7 @@ public class RebeldeService {
 
             if (vezesReportado == 3) {
                 rebelde.setTraidor(true);
+                rebelde.setRole("ROLE_TRAIDOR");
                 resultado = "Reportado e virou traidor";
             }
             repository.save(rebelde);

@@ -14,6 +14,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -27,8 +29,14 @@ public class RebeldeServiceTests {
     @MockBean
     private ItemInventarioRepository itemInventarioRepository;
 
+    @MockBean
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private  RebeldeService service;
+
+    @MockBean
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
     void ShouldInsertAndReturnRebelde() {
@@ -41,6 +49,8 @@ public class RebeldeServiceTests {
         Mockito.when(this.repository.save(rebelde)).thenReturn(created);
 
         Mockito.when(this.itemInventarioRepository.saveAll(Mockito.anyCollection())).thenReturn(Mockito.any());
+
+        Mockito.when(this.passwordEncoder.encode(rebelde.getSenha())).thenReturn("test");
 
         var response = this.service.inserir(rebelde);
 
