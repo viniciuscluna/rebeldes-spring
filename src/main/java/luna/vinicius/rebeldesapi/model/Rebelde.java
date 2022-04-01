@@ -2,6 +2,7 @@ package luna.vinicius.rebeldesapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,10 +23,30 @@ public class Rebelde {
     private  Integer idade;
     private String genero;
     private Boolean traidor;
+    private String senha;
     private String login;
 
     @JsonIgnore
-    private String senha;
+    public String getLogin() {
+        return login;
+    }
+
+    @JsonProperty
+    public void setLogin(final String login) {
+        this.login = login;
+    }
+
+
+
+    @JsonIgnore
+    public String getSenha() {
+        return senha;
+    }
+
+    @JsonProperty
+    public void setSenha(final String senha) {
+        this.senha = senha;
+    }
 
     @JsonIgnore
     private String role;

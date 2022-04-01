@@ -6,11 +6,14 @@ import luna.vinicius.rebeldesapi.dto.NegociacaoDto;
 import luna.vinicius.rebeldesapi.model.Localizacao;
 import luna.vinicius.rebeldesapi.model.Rebelde;
 import luna.vinicius.rebeldesapi.service.RebeldeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("rebeldes")
@@ -20,9 +23,13 @@ public class RebeldeController {
     private final RebeldeService rebeldeService;
 
     @GetMapping
-    public ResponseEntity<List<Rebelde>> buscar(){
-        var lista = rebeldeService.listar();
-        return  ResponseEntity.ok(lista);
+    public ResponseEntity<Page<Rebelde>> get(
+            @RequestParam Optional<String> sortBy,
+            @RequestParam Optional<Integer> page,
+            @RequestParam Optional<Integer> size,
+            @RequestParam Optional<Sort.Direction> direction
+            ){
+        return ResponseEntity.ok(rebeldeService.listarFiltrado(sortBy, page, size, direction));
     }
 
     @PostMapping("/inserir")

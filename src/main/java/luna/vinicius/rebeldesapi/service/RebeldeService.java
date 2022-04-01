@@ -2,32 +2,33 @@ package luna.vinicius.rebeldesapi.service;
 
 import lombok.RequiredArgsConstructor;
 import luna.vinicius.rebeldesapi.dto.NegociacaoDto;
-import luna.vinicius.rebeldesapi.model.ItemInventario;
 import luna.vinicius.rebeldesapi.model.Localizacao;
 import luna.vinicius.rebeldesapi.model.Rebelde;
 import luna.vinicius.rebeldesapi.repository.ItemInventarioRepository;
 import luna.vinicius.rebeldesapi.repository.RebeldeRepository;
+import luna.vinicius.rebeldesapi.repository.RebeldeSortRepository;
 import org.apache.commons.collections4.IterableUtils;
-import org.apache.commons.collections4.IteratorUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Streamable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class RebeldeService {
 
     private final RebeldeRepository repository;
+    private final RebeldeSortRepository repositorySort;
     private final ItemInventarioRepository itemInventarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<Rebelde> listar(){
-        return IterableUtils.toList(repository.findAll());
+    public Page<Rebelde> listarFiltrado(Optional<String> sortBy, Optional<Integer> page, Optional<Integer> size, Optional<Sort.Direction> direction){
+        return  repositorySort.findAll(PageRequest.of(page.orElse(0), size.orElse(10), direction.orElse(Sort.Direction.ASC), sortBy.orElse("id")
+        ));
     }
 
     public Rebelde inserir(Rebelde rebelde){
@@ -54,9 +55,8 @@ public class RebeldeService {
         rebelde.setReportadoTraidor(0);
         rebelde.setRole("ROLE_ADMIN");
         rebelde.setSenha(passwordEncoder.encode(rebelde.getSenha()));
-        var created = repository.save(rebelde);
 
-        return created;
+        return repository.save(rebelde);
     }
 
 
@@ -65,7 +65,7 @@ public class RebeldeService {
         if(consultaRebelde.isPresent()) {
             String resultado = "Reportado";
             var rebelde = consultaRebelde.get();
-            Integer vezesReportado = rebelde.getReportadoTraidor() + 1;
+            int vezesReportado = rebelde.getReportadoTraidor() + 1;
 
             rebelde.setReportadoTraidor(vezesReportado);
 
