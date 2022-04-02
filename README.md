@@ -2,6 +2,93 @@
 ## Documentação dos endpoints abaixo:
 > Url base: http://localhost:8080
 
+### Login
+Por padrão o sistema cria um usuário master com as seguintes credenciais:
+
+| Login | Senha |
+| ------ | ------ |
+| admin | admin |
+
+Request:
+
+| Método | Endpoint |
+| ------ | ------ |
+| POST | api/login |
+
+> Realiza login na aplicação:
+> 
+>### Método: x-www-form-urlencoded
+> 
+```sh
+username : admin
+password: admin
+```
+
+
+### Listar Rebeldes
+Para paginar utilize os seguintes parâmetros abaixo:
+
+| Parâmetro | Descrição | Exemplo |
+| ------ | ------ |------ |
+| sortBy | O campo a ser filtrado | nome |
+| page | Página selecionada (Inicia com 0) | 0 |
+| size | (Quantidade de itens por página) | 10 |
+| direction | Direção dos dados (DESC = Maior para menor, ASC = Menor para maior) | DESC |
+
+Request:
+
+| Método | Endpoint | Exemplo
+| ------ | ------ | ------ |
+| POST | rebeldes | rebeldes?sortBy=nome&page=0&size=10&direction=DESC
+
+Exemplo de resposta
+```sh
+{
+    "content": [
+        {
+            "id": 3,
+            "nome": "Teste3",
+            "idade": 40,
+            "genero": "Humano",
+            "traidor": false,
+            "localizacao": {
+                "id": 2,
+                "latitude": "12456",
+                "longitude": "1234567",
+                "nomeGalaxia": "terra"
+            },
+            "itens": []
+        }
+    ],
+    "pageable": {
+        "sort": {
+            "empty": false,
+            "sorted": true,
+            "unsorted": false
+        },
+        "offset": 0,
+        "pageNumber": 0,
+        "pageSize": 10,
+        "unpaged": false,
+        "paged": true
+    },
+    "last": true,
+    "totalElements": 3,
+    "totalPages": 1,
+    "size": 10,
+    "number": 0,
+    "sort": {
+        "empty": false,
+        "sorted": true,
+        "unsorted": false
+    },
+    "first": true,
+    "numberOfElements": 3,
+    "empty": false
+}
+```
+
+
 ### Inserir rebelde
 
 | Método | Endpoint |
