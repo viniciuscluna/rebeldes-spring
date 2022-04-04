@@ -54,11 +54,11 @@ public class Rebelde {
     @JsonIgnore
     private Integer reportadoTraidor;
 
-    @OneToOne(cascade=CascadeType.PERSIST)
+    @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="localizacao_id")
     private Localizacao localizacao;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "rebelde", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "rebelde", cascade = CascadeType.ALL)
     private Collection<ItemInventario> itens;
 }

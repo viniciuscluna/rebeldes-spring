@@ -41,20 +41,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/api/login/**").permitAll();
 
+        //Rebelde Only
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/rebeldes/**/atualizaLocalizacao").hasAnyAuthority("ROLE_REBELDE");
+        http.authorizeRequests().antMatchers("/rebeldes/**/reportarTraidor").hasAnyAuthority("ROLE_REBELDE");
+        http.authorizeRequests().antMatchers("/rebeldes/negociar").hasAnyAuthority("ROLE_REBELDE");
+
         //Admin Only
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/rebeldes").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers("/rebeldes/inserir").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers("/rebeldes/atualizaLocalizacao/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/rebeldes").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/rebeldes").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/rebeldes/**").hasAnyAuthority("ROLE_ADMIN");
 
-        //Rebelde, Admin Only
-        http.authorizeRequests().antMatchers("/rebeldes/reportarTraidor/**").hasAnyAuthority("ROLE_REBELDE", "ROLE_ADMIN");
-        http.authorizeRequests().antMatchers("/rebeldes/reportarTraidor/**").hasAnyAuthority("ROLE_REBELDE", "ROLE_ADMIN");
-        http.authorizeRequests().antMatchers("/rebeldes/negociar").hasAnyAuthority("ROLE_REBELDE", "ROLE_ADMIN");
-        http.authorizeRequests().antMatchers("/rebeldesRelatorio/tipoRecurso").hasAnyAuthority("ROLE_REBELDE", "ROLE_ADMIN");
-
-        //Traidor, Rebelde, Admin Only
-        http.authorizeRequests().antMatchers("/rebeldesRelatorio/**").hasAnyAuthority("ROLE_TRAIDOR", "ROLE_REBELDE", "ROLE_ADMIN");
-
+        //Rebelde and Admin Only
+        http.authorizeRequests().antMatchers("/rebeldesRelatorio/**").hasAnyAuthority( "ROLE_REBELDE", "ROLE_ADMIN");
 
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);

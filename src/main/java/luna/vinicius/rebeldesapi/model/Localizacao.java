@@ -22,4 +22,5 @@ public class Localizacao {
     private String latitude;
     private String longitude;
     private String nomeGalaxia;
+    private Boolean atualizada;
 }

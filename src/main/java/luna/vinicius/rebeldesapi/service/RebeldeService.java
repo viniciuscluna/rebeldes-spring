@@ -1,6 +1,7 @@
 package luna.vinicius.rebeldesapi.service;
 
 import lombok.RequiredArgsConstructor;
+import luna.vinicius.rebeldesapi.dto.InventarioRebeldeDto;
 import luna.vinicius.rebeldesapi.dto.NegociacaoDto;
 import luna.vinicius.rebeldesapi.model.Localizacao;
 import luna.vinicius.rebeldesapi.model.Rebelde;
@@ -26,12 +27,28 @@ public class RebeldeService {
     private final ItemInventarioRepository itemInventarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Page<Rebelde> listarFiltrado(Optional<String> sortBy, Optional<Integer> page, Optional<Integer> size, Optional<Sort.Direction> direction){
-        return  repositorySort.findAll(PageRequest.of(page.orElse(0), size.orElse(10), direction.orElse(Sort.Direction.ASC), sortBy.orElse("id")
+    public Page<Rebelde> listarFiltrado(Optional<String> sortBy, Optional<Integer> page, Optional<Integer> size, Optional<Sort.Direction> direction) {
+        return repositorySort.findAll(PageRequest.of(page.orElse(0), size.orElse(10), direction.orElse(Sort.Direction.ASC), sortBy.orElse("id")
         ));
     }
 
-    public Rebelde inserir(Rebelde rebelde){
+    public void remover(Integer rebeldeId) {
+        var rebelde = repository.findById(rebeldeId).get();
+
+        repository.delete(rebelde);
+    }
+
+    public void atualizar(Rebelde rebelde){
+        repository.save(rebelde);
+    }
+
+    public InventarioRebeldeDto inventario(int rebeldeId){
+        var rebelde = repository.findById(rebeldeId).get();
+        var inventario =  IterableUtils.toList(itemInventarioRepository.filterByRebelde(rebeldeId));
+        return new InventarioRebeldeDto(rebelde.getNome(), inventario);
+    }
+
+    public Rebelde inserir(Rebelde rebelde) {
         rebelde.setTraidor(false);
         rebelde.setReportadoTraidor(0);
         rebelde.setRole("ROLE_REBELDE");
@@ -40,7 +57,7 @@ public class RebeldeService {
         rebelde.setItens(new ArrayList<>());
         var created = repository.save(rebelde);
 
-        for(var item : itens){
+        for (var item : itens) {
             item.setRebelde(created);
         }
 
@@ -50,7 +67,7 @@ public class RebeldeService {
         return created;
     }
 
-    public Rebelde inserirAdmin(Rebelde rebelde){
+    public Rebelde inserirAdmin(Rebelde rebelde) {
         rebelde.setTraidor(false);
         rebelde.setReportadoTraidor(0);
         rebelde.setRole("ROLE_ADMIN");
@@ -62,7 +79,7 @@ public class RebeldeService {
 
     public String reportarTraidor(Integer rebeldeId) throws Exception {
         var consultaRebelde = repository.findById(rebeldeId);
-        if(consultaRebelde.isPresent()) {
+        if (consultaRebelde.isPresent()) {
             String resultado = "Reportado";
             var rebelde = consultaRebelde.get();
             int vezesReportado = rebelde.getReportadoTraidor() + 1;
@@ -76,12 +93,12 @@ public class RebeldeService {
             }
             repository.save(rebelde);
             return resultado;
-        }
-        else throw new Exception("Rebelde não encontrado");
+        } else throw new Exception("Rebelde não encontrado");
     }
 
-    public String atualizarLocalizacao(Localizacao localizacao, Integer rebeldeId){
+    public String atualizarLocalizacao(Localizacao localizacao, Integer rebeldeId) {
         var rebelde = repository.findById(rebeldeId).get();
+        localizacao.setAtualizada(true);
         rebelde.setLocalizacao(localizacao);
         repository.save(rebelde);
         return "Localização atualizada";
@@ -93,13 +110,13 @@ public class RebeldeService {
         var rebeldeB = repository.findById(negociacaoDto.getRebeldeBId()).get();
         var itensRebeldeB = IterableUtils.toList(itemInventarioRepository.filterByRebelde(negociacaoDto.getRebeldeBId()));
 
-        if(itensRebeldeA.stream().mapToInt(m-> m.getPontos()).sum() == itensRebeldeB.stream().mapToInt(m-> m.getPontos()).sum()){
+        if (itensRebeldeA.stream().mapToInt(m -> m.getPontos()).sum() == itensRebeldeB.stream().mapToInt(m -> m.getPontos()).sum()) {
 
-            for(var itemA : itensRebeldeA){
+            for (var itemA : itensRebeldeA) {
                 itemA.setRebelde(rebeldeB);
             }
 
-            for(var itemB : itensRebeldeB){
+            for (var itemB : itensRebeldeB) {
                 itemB.setRebelde(rebeldeA);
             }
 
@@ -107,8 +124,7 @@ public class RebeldeService {
             itemInventarioRepository.saveAll(itensRebeldeB);
 
             return "Negociação finalizada";
-        }
-        else throw new Exception("Quantidade entre pontos entre os rebeldes é diferente... abortando.");
+        } else throw new Exception("Quantidade entre pontos entre os rebeldes é diferente... abortando.");
 
     }
 }

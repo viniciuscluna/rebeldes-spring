@@ -25,7 +25,7 @@ password: admin
 ```
 
 
-### Listar Rebeldes
+### Listar Rebeldes (Admin Only)
 Para paginar utilize os seguintes parâmetros abaixo:
 
 | Parâmetro | Descrição | Exemplo |
@@ -88,12 +88,39 @@ Exemplo de resposta
 }
 ```
 
+### Inventário Rebelde (Admin Only)
+Traz o inventário do rebelde juntamente com seu nome:
 
-### Inserir rebelde
+Request:
+
+| Método | Endpoint 
+| ------ | ------ 
+| POST | rebeldes/{idRebelde}/inventario
+
+Exemplo de resposta
+```sh
+{
+    "rebelde": "Teste3",
+    "itens": [
+        {
+            "id": 7,
+            "nome": "Arma",
+            "pontos": 5
+        },
+        {
+            "id": 8,
+            "nome": "Comida",
+            "pontos": 10
+        }
+    ]
+}
+```
+
+### Inserir rebelde (Admin Only)
 
 | Método | Endpoint |
 | ------ | ------ |
-| POST | rebeldes/inserir |
+| POST | rebeldes |
 
 > Insere o rebelde na base de dados, exemplo de request:
 ```sh
@@ -119,7 +146,46 @@ Exemplo de resposta
 }
 ```
 
-### Atualizar localização do rebelde
+### Atualizar rebelde (Admin Only)
+
+| Método | Endpoint |
+| ------ | ------ |
+| PUT | rebeldes |
+
+> Insere o rebelde na base de dados, exemplo de request (Id é obrigatório):
+```sh
+{
+    "id":2,
+    "nome": "Teste",
+    "idade": 40,
+    "genero": "M",
+    "localizacao": {
+        "latitude": "12456",
+        "longitude": "1234567",
+        "nomeGalaxia": "terra"
+    },
+    "itens": [
+        {
+            "nome": "Arma",
+            "pontos": 5
+        },
+        {
+            "nome": "Comida",
+            "pontos": 10
+        }
+    ]
+}
+```
+
+### Remover rebelde (Admin Only)
+
+| Método | Endpoint |
+| ------ | ------ |
+| DELETE | rebeldes/{idRebelde} |
+
+> Remove o rebelde na base de dados (Request vazio)
+
+### Atualizar localização do rebelde (Rebelde Only)
 
 | Método | Endpoint |
 | ------ | ------ |
@@ -134,7 +200,7 @@ Exemplo de resposta
 }
 ```
 
-### Reportar Traidor
+### Reportar Traidor (Rebelde Only)
 
 | Método | Endpoint |
 | ------ | ------ |
@@ -143,7 +209,7 @@ Exemplo de resposta
 > Reporta rebelde como traidor (São necessárias 3 chamada para um rebelde se efetivar como traidor), (Request é vazio):
 
 
-### Negociar itens
+### Negociar itens (Rebelde Only)
 
 | Método | Endpoint |
 | ------ | ------ |
@@ -166,7 +232,7 @@ Exemplo de resposta
 }
 ```
 
-## Relatórios
+## Relatórios (Rebelde e Admin Only)
 
 ### Porcentagem de rebeldes
 

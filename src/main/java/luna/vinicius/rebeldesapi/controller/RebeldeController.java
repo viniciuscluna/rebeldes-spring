@@ -2,6 +2,7 @@ package luna.vinicius.rebeldesapi.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import luna.vinicius.rebeldesapi.dto.InventarioRebeldeDto;
 import luna.vinicius.rebeldesapi.dto.NegociacaoDto;
 import luna.vinicius.rebeldesapi.model.Localizacao;
 import luna.vinicius.rebeldesapi.model.Rebelde;
@@ -32,13 +33,30 @@ public class RebeldeController {
         return ResponseEntity.ok(rebeldeService.listarFiltrado(sortBy, page, size, direction));
     }
 
-    @PostMapping("/inserir")
+    @PostMapping
     public ResponseEntity<Rebelde> inserir(@Valid @RequestBody Rebelde rebelde){
         var criado = rebeldeService.inserir(rebelde);
         return ResponseEntity.ok(criado);
     }
 
-    @PostMapping("/reportarTraidor/{rebeldeId}")
+    @PutMapping
+    public ResponseEntity<String> atualizar(@Valid @RequestBody Rebelde rebelde){
+        rebeldeService.atualizar(rebelde);
+        return ResponseEntity.ok("Atualizado!");
+    }
+
+    @DeleteMapping("/{rebeldeId}")
+    public ResponseEntity<String> remover(@PathVariable Integer rebeldeId){
+        rebeldeService.remover(rebeldeId);
+        return ResponseEntity.ok("Removido!");
+    }
+
+    @GetMapping("/{rebeldeId}/inventario")
+    public ResponseEntity<InventarioRebeldeDto> inventario(@PathVariable Integer rebeldeId){
+        return ResponseEntity.ok(rebeldeService.inventario(rebeldeId));
+    }
+
+    @PostMapping("/{rebeldeId}/reportarTraidor")
     public ResponseEntity<String> reportarTraidor(@PathVariable Integer rebeldeId){
         try {
             var resultado = rebeldeService.reportarTraidor(rebeldeId);
@@ -49,7 +67,7 @@ public class RebeldeController {
         }
     }
 
-    @PutMapping("/atualizaLocalizacao/{rebeldeId}")
+    @PutMapping("/{rebeldeId}/atualizaLocalizacao")
     public ResponseEntity<String> atualizaLocalizacao(
             @PathVariable Integer rebeldeId,
             @Valid @RequestBody Localizacao localizacao){
