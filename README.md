@@ -189,7 +189,7 @@ Exemplo de resposta
 
 | Método | Endpoint |
 | ------ | ------ |
-| PUT | rebeldes/atualizaLocalizacao/{rebeldeId} |
+| PUT | rebeldes/{rebeldeId}/atualizaLocalizacao |
 
 > Atualiza localização do rebelde, exemplo de request:
 ```sh
@@ -204,7 +204,7 @@ Exemplo de resposta
 
 | Método | Endpoint |
 | ------ | ------ |
-| POST | rebeldes/reportarTraidor/{rebeldeId} |
+| POST | rebeldes/{rebeldeId}/reportarTraidor |
 
 > Reporta rebelde como traidor (São necessárias 3 chamada para um rebelde se efetivar como traidor), (Request é vazio):
 
