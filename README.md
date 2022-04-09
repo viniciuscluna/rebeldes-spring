@@ -17,13 +17,48 @@ Request:
 
 > Realiza login na aplicação:
 > 
->### Método: x-www-form-urlencoded
-> 
+>#### Método: x-www-form-urlencoded
+>
+
+#### Request
 ```sh
 username : admin
 password: admin
 ```
+#### Response
+```sh 
+access_token : {token}
+refresh_token: {token}
+```
 
+
+### Refresh Token
+Quando é feito um login, a aplicação retornar uma propriedade chamada "refresh_token", 
+ao utilizar ela no payload abaixo, o sistema gera um novo token de acesso,
+evitando fazer login várias vezes.
+
+Request:
+
+| Método | Endpoint |
+| ------ | ------ |
+| GET | token/refresh |
+
+> Realiza login na aplicação:
+>
+>### Método: x-www-form-urlencoded
+> 
+ 
+####Request
+```sh 
+Header
+Authorization : "Bearer {refresh_token}"
+```
+
+####Response
+```sh 
+access_token : {token}
+refresh_token: {token}
+```
 
 ### Listar Rebeldes (Admin Only)
 Para paginar utilize os seguintes parâmetros abaixo:

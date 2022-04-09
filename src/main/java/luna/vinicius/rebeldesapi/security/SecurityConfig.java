@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/login/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/login/**", "/token/refresh").permitAll();
 
         //Rebelde Only
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/rebeldes/**/atualizaLocalizacao").hasAnyAuthority("ROLE_REBELDE");
