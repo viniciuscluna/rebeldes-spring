@@ -22,7 +22,7 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var rebeldequery = IterableUtils.toList(rebeldeRepository.filterByLogin(username)).stream().findFirst();
+        var rebeldequery = IterableUtils.toList(rebeldeRepository.filterByLogin(username).toIterable()).stream().findFirst();
         if (rebeldequery.isPresent()) {
             var rebelde = rebeldequery.get();
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();

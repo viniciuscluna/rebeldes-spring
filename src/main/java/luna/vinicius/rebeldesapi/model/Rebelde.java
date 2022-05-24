@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -14,9 +16,10 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
+@Table
 public class Rebelde {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String nome;
@@ -48,7 +51,7 @@ public class Rebelde {
         this.senha = senha;
     }
 
-    @JsonIgnore
+    @Column(value = "role")
     private String role;
 
     @JsonIgnore
@@ -58,7 +61,4 @@ public class Rebelde {
     @JoinColumn(name="localizacao_id")
     private Localizacao localizacao;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "rebelde", cascade = CascadeType.ALL)
-    private Collection<ItemInventario> itens;
 }

@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -28,12 +29,13 @@ public class RebeldeService {
     private final PasswordEncoder passwordEncoder;
 
     public Page<Rebelde> listarFiltrado(Optional<String> sortBy, Optional<Integer> page, Optional<Integer> size, Optional<Sort.Direction> direction) {
-        return repositorySort.findAll(PageRequest.of(page.orElse(0), size.orElse(10), direction.orElse(Sort.Direction.ASC), sortBy.orElse("id")
-        ));
+        var pageable = PageRequest.of(page.orElse(0), size.orElse(10), direction.orElse(Sort.Direction.ASC), sortBy.orElse("id")
+        );
+        return null;
     }
 
     public void remover(Integer rebeldeId) {
-        var rebelde = repository.findById(rebeldeId).get();
+        var rebelde = repository.findById(rebeldeId).block();
 
         repository.delete(rebelde);
     }
@@ -43,7 +45,7 @@ public class RebeldeService {
     }
 
     public InventarioRebeldeDto inventario(int rebeldeId){
-        var rebelde = repository.findById(rebeldeId).get();
+        var rebelde = repository.findById(rebeldeId).block();
         var inventario =  IterableUtils.toList(itemInventarioRepository.filterByRebelde(rebeldeId));
         return new InventarioRebeldeDto(rebelde.getNome(), inventario);
     }
@@ -53,17 +55,17 @@ public class RebeldeService {
         rebelde.setReportadoTraidor(0);
         rebelde.setRole("ROLE_REBELDE");
         rebelde.setSenha(passwordEncoder.encode(rebelde.getSenha()));
-        var itens = rebelde.getItens();
-        rebelde.setItens(new ArrayList<>());
-        var created = repository.save(rebelde);
+        //var itens = rebelde.getItens();
+        //rebelde.setItens(new ArrayList<>());
+        var created = repository.save(rebelde).block();
 
-        for (var item : itens) {
-            item.setRebelde(created);
-        }
+        //for (var item : itens) {
+          //  item.setRebelde(created);
+        //}
 
-        itemInventarioRepository.saveAll(itens);
+        //itemInventarioRepository.saveAll(itens);
 
-        created.setItens(itens);
+        //created.setItens(itens);
         return created;
     }
 
@@ -73,12 +75,12 @@ public class RebeldeService {
         rebelde.setRole("ROLE_ADMIN");
         rebelde.setSenha(passwordEncoder.encode(rebelde.getSenha()));
 
-        return repository.save(rebelde);
+        return repository.save(rebelde).block();
     }
 
 
     public String reportarTraidor(Integer rebeldeId) throws Exception {
-        var consultaRebelde = repository.findById(rebeldeId);
+        var consultaRebelde = repository.findById(rebeldeId).blockOptional();
         if (consultaRebelde.isPresent()) {
             String resultado = "Reportado";
             var rebelde = consultaRebelde.get();
@@ -97,7 +99,7 @@ public class RebeldeService {
     }
 
     public String atualizarLocalizacao(Localizacao localizacao, Integer rebeldeId) {
-        var rebelde = repository.findById(rebeldeId).get();
+        var rebelde = repository.findById(rebeldeId).block();
         localizacao.setAtualizada(true);
         rebelde.setLocalizacao(localizacao);
         repository.save(rebelde);
@@ -105,9 +107,9 @@ public class RebeldeService {
     }
 
     public String negociar(NegociacaoDto negociacaoDto) throws Exception {
-        var rebeldeA = repository.findById(negociacaoDto.getRebeldeAId()).get();
+        var rebeldeA = repository.findById(negociacaoDto.getRebeldeAId()).block();
         var itensRebeldeA = IterableUtils.toList(itemInventarioRepository.filterByRebelde(negociacaoDto.getRebeldeAId()));
-        var rebeldeB = repository.findById(negociacaoDto.getRebeldeBId()).get();
+        var rebeldeB = repository.findById(negociacaoDto.getRebeldeBId()).block();
         var itensRebeldeB = IterableUtils.toList(itemInventarioRepository.filterByRebelde(negociacaoDto.getRebeldeBId()));
 
         if (itensRebeldeA.stream().mapToInt(m -> m.getPontos()).sum() == itensRebeldeB.stream().mapToInt(m -> m.getPontos()).sum()) {
