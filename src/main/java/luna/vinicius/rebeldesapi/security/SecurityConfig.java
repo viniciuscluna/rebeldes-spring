@@ -40,6 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/api/login/**", "/token/refresh").permitAll();
+        http.authorizeRequests().antMatchers("/actuator/**", "/actuator").permitAll();
+
 
         //Rebelde Only
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/rebeldes/**/atualizaLocalizacao").hasAnyAuthority("ROLE_REBELDE");
